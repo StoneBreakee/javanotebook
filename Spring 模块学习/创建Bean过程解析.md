@@ -91,5 +91,20 @@ protected Object createBean(String beanName,RootBeanDefinition mbd,Object[] args
   Class<?> resolvedClass = resolveBeanClass(mbd,beanName);
 }
 
-doCreateBean... 待续
+AbstractBeanFactory
+// 根据给定的BeanDefinition解析出beanClass
+// 过程：将classname解析为一个class对象引用,并且将class对象引用存储到BeanDefinition中
+// 返回：返回解析后的beanClass对象
+protected Class<?> resolveBeanClass(final RootBeanDefinition mbd,String beanName,final Class<?>... typesToMatch) throws CannotLoadBeanException {
+  try{
+    // 确认该BeanDefinition是否指定了beanClass:Object
+    // RootBeanDefinition 该BeanDefinition合并了其父类BeanDefinition，继承AbstractBeanDefinition
+    // AbstractBeanDefinition
+    //    ---- private volatile Object beanClass;//Class对象
+    if(mbd.hasBeanClass()){
+      return mbd.getBeanClass();
+    }
+    return doResolveBeanClass(mbd,typeToMatch);
+  }
+}
 ```

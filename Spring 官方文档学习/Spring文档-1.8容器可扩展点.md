@@ -94,5 +94,69 @@ jdbc.password=root
 所以，对于一个给定的id为'myBean'的FactoryBean实例，调用`getBean("myBean")`返回的是由FactoryBean生产的对象实例，调用`getBean("&myBean")`返回的是FactoryBean实例自身。
 
 ### 参考
-[Spring IoC结构](https://juejin.im/entry/5a3f6909f265da43163d47f2)
-[BeanFactory 和 FactoryBean](https://www.cnblogs.com/aspirant/p/9082858.html)
+1. [Spring IoC结构](https://juejin.im/entry/5a3f6909f265da43163d47f2)
+2. [BeanFactory 和 FactoryBean](https://www.cnblogs.com/aspirant/p/9082858.html)
+``` java
+public class MyFactoryBean implements FactoryBean<Object>,InitializingBean,DisposableBean{
+  private static final Logger logger = LoggerFactory.getLogger(MyFactoryBean.class);
+  private String interfaceName;
+  private Object target;
+  private Object proxyObj;
+
+  @Override
+  public void destroy() throws Exception{
+    logger.debug("destroy...");
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception{
+    proxyObj = Proxy.newInstance(this.getClass().getClassLoader(),new Class[]{Class.forName(iterfaceName)},new InvocationHandler(){
+      @Override
+      public Object invoke(Object proxy,Method method,Object[] args) throws Throwable{
+        logger.debug("invoke method..." + method.getName());
+        logger.debug("invoke method before..." + System.currentTimeMillis());
+        Object result = method.invoke(target,args);
+        logger.debug("invoke method after..." + System.currentTimeMillis());
+        return result;
+      }
+    });
+    logger.debug("afterPropertiesSet...");
+  }
+
+  @Override
+  public Object getObject() throws Exception{
+    logger.debug("getObject ...");
+    return proxyObj;
+  }
+
+  @Override
+  public Class<?> getObjectType(){
+    return proxyObj == null ? Object.class : proxyObj.getClass();
+  }
+
+  @Override
+  public boolean isSingleton(){
+    return true;
+  }
+}
+
+<bean id="fbHelloWorldService" class="com.ebao.xxx.MyFactoryBean">
+  <property name="interfaceName" value="com.ebao.xxx.HelloWorldService" />
+  <property name="target" ref="helloWorldService" />
+</bean>
+
+@RunWith(JUnit4ClassRunner.class)
+@ContextConfiguration(class = {MyFactoryBeanConfig.class})
+public class MyFactoryBeanTest{
+  @Autowired
+  private ApplicationContext context;
+
+  @Test
+  public void testFactoryBean(){
+    HelloWorldService helloWorldService = (HelloWorldService)context.getBean("fbHelloWorldService");
+    helloWorldService.getBeanName();
+    helloWorldService.sayHello();
+  }
+}
+```
+

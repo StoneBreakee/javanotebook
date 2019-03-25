@@ -80,7 +80,18 @@ jdbc.password=root
 2. `fallback` 1:check system properties if not resolvable in the specified properties files.This is the default.
 3. `override` 2:check system properties first,before trying the specified properties files.This lets system properties override any other property source.
 
-### 1.8.3 
+### 1.8.3 Customizing Instantiation Logic With a `FactoryBean`
+我们可以实现org.springframework.beans.factory.FactoryBean接口来为Object创建自己的工厂方法。
+`FactoryBean`接口是Spring IoC容器的实例化逻辑的一个嵌入点。如果有需要很复杂的实例化逻辑以代码的形式比在XML中配置更好的实现，就需要创建FactoryBean，在实现类中写入自己的
+实例化逻辑，然后将自定义FactoryBean嵌入到Spring IoC容器中。
+`FactoryBean`接口提供了三个方法:
+- Object getObject():返回一个由该工厂方法创建的实例对象。该实例对象能否可以被共享，取决于该工厂方法返回的是singleton还是prototype类型的实例。
+- boolean isSingleton():如果该工厂方法返回的是单例实例则返回`true`否则返回`false`。
+- Class getObjectType():返回由getObject()方法返回的实例的类型(object type),如果事先不知道就返回null。
+
+`FactoryBean`接口和概念用于SpringFramework中的许多位置。`FactoryBean`接口的50多个实现随Spring一起提供。
+当你向Spring IoC 容器请求FactoryBean实例而不是由FactoryBean生产的实例，那么当我们调用ApplicationContext.getBean(beanId)时，需要给beanId添加'&'前缀。
+所以，对于一个给定的id为'myBean'的FactoryBean实例，调用`getBean("myBean")`返回的是由FactoryBean生产的对象实例，调用`getBean("&myBean")`返回的是FactoryBean实例自身。
 
 ### 参考
 [Spring IoC结构](https://juejin.im/entry/5a3f6909f265da43163d47f2)

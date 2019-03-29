@@ -7,7 +7,7 @@ XML中的`<bean>`角括号声明。开发人员在相关类，方法和字段声
 - 在Spring2.5中引入了@Autowired注解，其作用与@Reuqired注解装配属性类似。但是本质上  
   @Autowired注解提供了更细致粒度的控制和更广泛的适用性。
 - Spring2.5也增加了对JSR-250注解的支持，例如@PostConstruct和@PreDestroy注解。
-- Spring3.0增加了对JSR-330(基于Java原生的依赖注入)的支持，这些注解在`javax.inject`  
+- Spring3.0增加了对`JSR-330`(基于Java原生的依赖注入)的支持，这些注解在`javax.inject`  
   包中，注解有@Named,@Inject等。
   
 > 注解注入的执行顺序优先于XML注入。因此，XML配置会覆盖注解配置的属性配置。
@@ -32,3 +32,10 @@ public class SimpleMovieLister{
   // ...
 }
 ```
+此注解表示必须在配置时填充受影响的bean属性，可以通过在beandefinition中显式的指定property的  
+值也可以通过自动装配。如果受影响[即被@Required注解的]的bean属性没有被填充，Spring IoC 容器  
+就会抛出异常,从而防止程序运行之后抛出`NullPointerException`.建议对通过类自身的方法对属性进行  
+判断,比如使用init-method等。
+> @Required注解在SpringFramework5.1中被正式废弃。建议使用constructor注入来确保配置强依赖的属性
+
+### 1.9.2 Using @Autowired

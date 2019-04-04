@@ -39,3 +39,50 @@ public class SimpleMovieLister{
 > @Required注解在SpringFramework5.1中被正式废弃。建议使用constructor注入来确保配置强依赖的属性
 
 ### 1.9.2 Using @Autowired
+> `JSR-330`中的@Inject注解可以用于替换@Autowired注解，使用方式可参见11.1章节
+@Autowired注解使用方式如下所示：
+``` java
+public class MovieRecommender{
+  private final CustomerPreferenceDao customerPreferenceDao;
+  
+  @Autowired
+  public MovieRecommender(CustomerPreferenceDao customerPreferenceDao){
+    this.customerPreferenceDao = customerPreferenceDao;
+  }
+  // ...
+}
+
+public class SimpleMovieLister{
+  private MovieFinder movieFinder;
+
+  @Autowired
+  public void setMovieFinder(MovieFinder movieFinder){
+    this.movieFinder = movieFinder;
+  }
+}
+
+//你也可以使用@Autowiredz注解应用到任意名字和多个参数的方法上
+public class MovieRecommender{
+  private MovieCatalog movieCatalog;
+  private CustomerPreferenceDao customerPreferenceDao;
+
+  @Autowired
+  public void prepare(MovieCatalog movieCatalog,CustomerPreferenceDao customerPreferenceDao){
+    this.movieCatalog = movieCatalog;
+    this.customerPreferenceDao = customerPreferenceDao;
+  }
+}
+
+//也可以将@Autowired应用到属性上，也可以同时将@Autowired应用到属性和构造函数上
+public class MovieRecommender{
+  private final CustomerPreferenceDao customerPreferenceDao;
+
+  @Autowired
+  private MovieCatalog movieCatalog;
+
+  @Autowired
+  public MovieRecommender(CustomerPreferenceDao customerPreferenceDao){
+    this.customerPreferenceDao = customerPreferenceDao;
+  }
+}
+```

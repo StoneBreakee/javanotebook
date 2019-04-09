@@ -65,3 +65,13 @@ class列表：类似于`<div class="a b c ...">`
 - 条件渲染 `v-if`
 - 事件修饰符  
 访问原生DOM事件 $event
+
+### 2019/4/9
+添加数据列: 
+``` sql
+alter table `student` add column `weight` int(11) unsigned default null comment '权重，用于拖拽排序';
+```
+复制数据列的值到另一列
+``` sql
+update `student` set weight = id;
+```

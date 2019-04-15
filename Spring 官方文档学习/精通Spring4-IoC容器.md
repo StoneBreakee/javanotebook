@@ -52,7 +52,7 @@ web.xml中完成配置即可。
 Bean的生命周期由多个特定的生命阶段组成，每个生命阶段都开出了一扇门，允许外界由此门对Bean施加控制。  
 下面分别对BeanFactory和ApplicationContext中Bean的生命周期进行分析。
 
-##### 4.3.1 BeanFactory中Bean的生命周期
+#### 4.3.1 BeanFactory中Bean的生命周期
 起点:[通过getBean()调用某一个Bean]  
 经由:  
 1.  **调用InstantiationAwareBeanPostProcessor的postProcessBeforeInstantiation()方法**  
@@ -86,4 +86,11 @@ Bean的生命周期从Spring容器着手实例化Bean开始，直到最终销毁
    附加装置的形式注册到Spring容器中，并通过接口反射为Spring容器扫描识别[这里涉及到`BeanFactory`  
    和Application的区别，Spring容器在BeanFactory的情况下需要手工注册，在ApplicationContext  
    场景下可实现自动扫描发现机制]。  
-     
+  
+#### 4.3.2 AplicationContext中Bean的生命周期
+如果在配置文件中声明了工厂后处理器接口`BeanFactoryPostProcessor`的实现类，则应用上下文在装载配置  
+文件之后，初始化Bean实例之前将调用这些`BeanFactoryPostProcessor`对这些配置i信息进行处理。Spring  
+提供了多个工厂后处理器，如PropertyPlaceholderConfigurer等。  
+`ApplicationContext`和`BeanFactory`另一个最大的不同之处在于:前者会利用Java反射机制自动识别出配  
+置文件中定义的`BeanPostProcessor`,`InstantiationAwareBeanPostProcessor`和`BeanFactoryPostProcessor`，  
+并自动将它们注册到应用上下文中;而后者需要在代码中通过手工调用addBeanPostProcessor()方法进行注册。

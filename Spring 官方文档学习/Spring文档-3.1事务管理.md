@@ -35,7 +35,8 @@ The concept of join points as matched by pointcut expressions is central to AOP,
 ```
 由切点表达式匹配到连接点的概念是AOP的核心思想，Spring默认使用AspectJ切点表达式。
 - Introduce(引入):为某种类型接口的Bean引入一个新的的方法或成员变量。Spring AOP允许我们引入一个接口和  
-  一个实现类来应用到被增强的对象上。学习链接：[Introduce](https://www.cnblogs.com/lcngu/p/6346777.html)
+  一个实现类来应用到被增强的对象上。学习链接：[Introduce介绍](https://www.cnblogs.com/lcngu/p/6346777.html)  
+  [IntrodutionAdvice原理](https://my.oschina.net/zudajun/blog/663962)
 - Target Object(目标对象):被一个或多个切面增强的对象.由于Spring AOP采用的是运行时代理，这个对象通  
   常是被增强后的代理。
 - AOP Proxy(AOP代理):由AOP框架创建的对象，用于实现切面契约(在连接点上的增强执行等等)。在Spring  
@@ -44,4 +45,17 @@ The concept of join points as matched by pointcut expressions is central to AOP,
   这种过程可以在编译期，加载期和运行期执行。Spring AOP，类似于其他纯Java AOP框架，在运行时执行织入。
 
 在Spring的增强的几种增强类型中，围绕增强是最强有力的一种，其他的类型有前置增强，后置增强(又细分为：正常返回  
-异常返回)。
+异常返回)。由于Spring AOP像AspectJ，提供了各种增强范围的类型，我们推荐使用最小满足增强类型以实现你需要的行为。
+例如，如果你只需要在方法返回之后更新你的缓存，最好的实现方式是使用返回增强类型而不是围绕增强类型，尽管围绕增强  
+类型也可以完成同样的事情。使用最具体增强类型可以提供更简单的编程模型，减少错误的可能性。例如，你不需要为围绕增  
+强的连接点上调用proceed()方法，因此，你不会调用因为调用proceed()而失败。
+```
+?All advice parameters are statically typed so that you work with advice parameters of the appropriate  
+ type (e.g. the type of the return value from a method execution) rather than Object arrays.
+```
+由切点匹配连接点的概念是AOP的关键概念，它将仅提供拦截的旧技术分开来。(?AOP不也是拦截么？)切点使得增强可以独立于  
+面向对象的层次[跨对象]进行定位。例如，你可以使用环绕增强来提供声明式事务管理到一组横跨多个对象的方法上(例如在业务  
+逻辑层面的多个业务操作上使用事务)。
+
+It is important to grasp the fact that Spring AOP is proxy-based. [See Understanding AOP Proxies for a  
+ thorough examination of exactly what this implementation detail actually means.](https://docs.spring.io/spring/docs/5.1.6.RELEASE/spring-framework-reference/core.html#aop-understanding-aop-proxies)

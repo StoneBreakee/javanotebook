@@ -75,3 +75,18 @@ alter table `student` add column `weight` int(11) unsigned default null comment 
 ``` sql
 update `student` set weight = id;
 ```
+
+### 2019/5/22
+需要从表中选出符合条件的数据进行更新，但是抛出`You can't specify target table '表名' for update in FROM clause`错误
+``` sql
+UPDATE user_info SET STATUS = '1' WHERE USER_ID IN (SELECT USER_ID FROM user_info WHERE NAME != '');
+```
+原因：在Mysql中不能先select一个表的记录，然后再按此条件进行更新和删除同一个表中的记录
+解决：将select得到的结果作为中间表，再select一遍，就可以规避该错误
+``` sql
+UPDATE user_info SET STATUS = '1' WHERE USER_ID IN (
+  SELECT USER_ID FROM (
+    SELECT USER_ID FROM user_info WHERE NAME != ''
+  ) t1
+);
+```

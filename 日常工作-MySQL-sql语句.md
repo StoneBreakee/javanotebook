@@ -90,3 +90,10 @@ UPDATE user_info SET STATUS = '1' WHERE USER_ID IN (
   ) t1
 );
 ```
+
+### 2019/5/29
+在查询数据时，需要对某列的值进行判断，如果包含','号，则进行分割并取','后的值;如果不包含','，则原样显示
+某列col1的值：'somebody,某人','elseone001'
+``` sql
+select if(locate(',',col1) > 0, substring(col1,',', -1), col1) as demo_user from demo_table;
+```
